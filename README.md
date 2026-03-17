@@ -13,7 +13,7 @@ iPad-style floating dock on iPhone with 6-icon support.
 ### Cylinder Remade
 24 page-swipe animations for the home screen (cube, vortex, wave, spin, etc.).
 
-- **Original tweak:** [Cylinder Remade](https://github.com/ryannair05/Cylinder-Remade) by ryannair05
+- **Original tweak:** [Cylinder Remade](https://github.com/ryannair05/Cylinder-Remade) by [@ryannair05](https://x.com/ryannair05)
 - **Source:** [`Cylinder/CylinderActivator.m`](Cylinder/CylinderActivator.m)
 
 ## Usage
@@ -49,5 +49,5 @@ Pre-built ad-hoc signed dylibs are in [`dylibs/`](dylibs/).
 ## Credits
 
 - [FloatingDockXVI](https://github.com/nahtedetihw/FloatingDockXVI) by [@EthanWhited](https://x.com/EthanWhited) — original floating dock tweak
-- [Cylinder Remade](https://github.com/ryannair05/Cylinder-Remade) by ryannair05 — original page animation tweak
+- [Cylinder Remade](https://github.com/ryannair05/Cylinder-Remade) by [@ryannair05](https://x.com/ryannair05) — original page animation tweak
 - [Coruna](https://github.com/khanhduytran0/coruna) by 34306, Duy Tran, Nick Chan — exploit chain

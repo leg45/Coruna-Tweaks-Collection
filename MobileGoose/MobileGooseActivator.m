@@ -191,59 +191,107 @@ static UIColor *g_shadowColor;
 }
 
 - (void)drawRect:(CGRect)rect {
-    CGFloat deg = _facingTo, rad = deg * M_PI / 180.0;
-    [self notifyHandlers:0x80]; // will start
+    CGFloat facingToDegrees = _facingTo;
+    CGFloat facingToRadians = facingToDegrees * M_PI / 180.0;
+    [self notifyHandlers:0x80];
 
+    // Shadow
     [g_shadowColor setFill];
-    CGRect sb = CGRectMake(20, 30, 30, 30);
-    [[UIBezierPath bezierPathWithOvalInRect:sb] fill];
-
-    [[UIColor orangeColor] setFill];
-    CGFloat ch = (_walkMultiplier / 2.6);
-    switch (_walkingState) {
-        case 0: _foot1Y = _foot2Y = 36.0; break;
-        case 1: _foot1Y += ch; _foot2Y -= ch; break;
-        case 2: _foot1Y -= ch; _foot2Y += ch; break;
-        case 3: _foot1Y += ch; break;
+    CGRect shadowBounds = CGRectMake(20, 30, 30, 30);
+    @autoreleasepool {
+        [[UIBezierPath bezierPathWithOvalInRect:shadowBounds] fill];
     }
-    if (_walkMultiplier < 0) { CGFloat t = _foot2Y; _foot2Y = _foot1Y; _foot1Y = t; }
-    if ((_walkingState == 1 || _walkingState == 3) && _foot1Y >= 50) { _walkingState = 2; _foot1Y = 50; _foot2Y = 36; }
-    else if (_walkingState == 2 && _foot1Y <= 36) { _walkingState = 1; _foot2Y = 50; _foot1Y = 36; }
-    if (_walkMultiplier < 0) { CGFloat t = _foot2Y; _foot2Y = _foot1Y; _foot1Y = t; }
-    UIBezierPath *fp = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(24.5, _foot1Y, 6, 6)];
-    [fp appendPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(38.5, _foot2Y, 6, 6)]];
-    [MGGooseView rotatePath:fp degree:deg + 90 bounds:sb];
-    [fp fill];
 
-    [[UIColor whiteColor] setFill];
-    CGRect r1 = CGRectMake(25, 20, 20, 20), r2 = CGRectMake(25, 15, 20, 20);
-    UIBezierPath *bp = [UIBezierPath bezierPathWithRect:CGRectMake(25, 30, 20, r2.origin.y - 20)];
-    [bp appendPath:[UIBezierPath bezierPathWithOvalInRect:r1]];
-    [bp appendPath:[UIBezierPath bezierPathWithOvalInRect:r2]];
-    [MGGooseView rotatePath:bp degree:deg + 90 bounds:bp.bounds];
-    [bp fill];
-
-    [[UIColor whiteColor] setFill];
-    CGRect nr = CGRectMake(27.5 + 10 * cos(rad), 24.8 + 10 * sin(rad), 15, 10);
-    UIBezierPath *np = [UIBezierPath bezierPathWithRect:nr];
-    [np appendPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(nr.origin.x, nr.origin.y - 7.5, 15, 15)]];
-    [np appendPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(nr.origin.x, nr.origin.y + 7.5, 15, 15)]];
-    [np fill];
-
+    // Feet
     [[UIColor orangeColor] setFill];
-    CGRect br = CGRectMake(31 + 15 * cos(rad), 24.5 + 15 * sin(rad), 8, 8);
-    [[UIBezierPath bezierPathWithOvalInRect:br] fill];
+    @autoreleasepool {
+        CGFloat change = (_walkMultiplier / 2.6);
+        switch (_walkingState) {
+            case 0: _foot1Y = _foot2Y = 36.0; break;
+            case 1: _foot1Y += change; _foot2Y -= change; break;
+            case 2: _foot1Y -= change; _foot2Y += change; break;
+            case 3: _foot1Y += change; break;
+        }
+        const CGFloat footSize = 6.0;
+        const CGFloat foot1X = 24.5;
+        const CGFloat foot2X = 38.5;
+        if (_walkMultiplier < 0.0) {
+            change = _foot2Y; _foot2Y = _foot1Y; _foot1Y = change;
+        }
+        switch (_walkingState) {
+            case 1: case 3:
+                if (_foot1Y >= 50.0) { _walkingState = 2; _foot1Y = 50.0; _foot2Y = 36.0; }
+                break;
+            case 2:
+                if (_foot1Y <= 36.0) { _walkingState = 1; _foot2Y = 50.0; _foot1Y = 36.0; }
+                break;
+        }
+        if (_walkMultiplier < 0.0) {
+            change = _foot2Y; _foot2Y = _foot1Y; _foot1Y = change;
+        }
+        UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(foot1X, _foot1Y, footSize, footSize)];
+        [path appendPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(foot2X, _foot2Y, footSize, footSize)]];
+        [MGGooseView rotatePath:path degree:facingToDegrees+90.0 bounds:shadowBounds];
+        [path fill];
+    }
 
-    [[UIColor blackColor] setFill];
-    for (int8_t i = 0, off = 15; i < 2; i++) {
-        CGRect er = CGRectMake(32.5 + 12 * cos(DEG_TO_RAD(deg + off)), 24.5 + 12 * sin(DEG_TO_RAD(deg + off)), 4.8, 4.8);
-        [[UIBezierPath bezierPathWithOvalInRect:er] fill];
-        off = -off;
+    // Body
+    [[UIColor whiteColor] setFill];
+    @autoreleasepool {
+        CGRect oval1Rect = CGRectMake(25, 20, 20, 20);
+        UIBezierPath *oval1 = [UIBezierPath bezierPathWithOvalInRect:oval1Rect];
+        CGRect oval2Rect = CGRectMake(oval1Rect.origin.x, 55-oval1Rect.size.height, oval1Rect.size.width, oval1Rect.size.height);
+        UIBezierPath *oval2 = [UIBezierPath bezierPathWithOvalInRect:oval2Rect];
+        CGRect rectangleRect = CGRectMake(oval1Rect.origin.x, oval1Rect.origin.y+oval1Rect.size.height/2, oval1Rect.size.width, oval2Rect.origin.y-oval1Rect.origin.y);
+        UIBezierPath *finalPath = [UIBezierPath bezierPathWithRect:rectangleRect];
+        [finalPath appendPath:oval1];
+        [finalPath appendPath:oval2];
+        [MGGooseView rotatePath:finalPath degree:facingToDegrees+90.0 bounds:finalPath.bounds];
+        [finalPath fill];
+    }
+
+    // Neck
+    [[UIColor whiteColor] setFill];
+    @autoreleasepool {
+        const CGFloat neckHeight = 10;
+        CGRect neckRect = CGRectMake(10, 20, 15, neckHeight);
+        const CGFloat radius = 10.0;
+        neckRect.origin.x += 17.5 + (radius * cos(facingToRadians));
+        neckRect.origin.y += 4.8 + (radius * sin(facingToRadians));
+        UIBezierPath *path = [UIBezierPath bezierPathWithRect:neckRect];
+        CGRect capRect = CGRectMake(neckRect.origin.x, neckRect.origin.y - (neckRect.size.width / 2), neckRect.size.width, neckRect.size.width);
+        [path appendPath:[UIBezierPath bezierPathWithOvalInRect:capRect]];
+        capRect.origin.y += capRect.size.width;
+        [path appendPath:[UIBezierPath bezierPathWithOvalInRect:capRect]];
+        [path fill];
+    }
+
+    // Face (beak)
+    [[UIColor orangeColor] setFill];
+    @autoreleasepool {
+        const CGFloat beakSize = 8.0;
+        CGRect beakRect = CGRectMake(10, 20, beakSize, beakSize);
+        const CGFloat beakRadius = 15.0;
+        beakRect.origin.x += 21.0 + (beakRadius * cos(facingToRadians));
+        beakRect.origin.y += 4.5 + (beakRadius * sin(facingToRadians));
+        [[UIBezierPath bezierPathWithOvalInRect:beakRect] fill];
+
+        // Eyes
+        [[UIColor blackColor] setFill];
+        const CGFloat eyeSize = beakSize * 0.6;
+        const CGFloat eyeRadius = beakRadius - 3.0;
+        beakRect.size.height = beakRect.size.width = eyeSize;
+        for (int8_t i=0, offset=15; i<2; i++) {
+            beakRect.origin.x = 32.5 + (eyeRadius * cos(DEG_TO_RAD(facingToDegrees + offset)));
+            beakRect.origin.y = 24.5 + (eyeRadius * sin(DEG_TO_RAD(facingToDegrees + offset)));
+            [[UIBezierPath bezierPathWithOvalInRect:beakRect] fill];
+            offset = -offset;
+        }
     }
 
     if (_remainingFramesUntilCompletion == 0) _walkingState = 0;
     if (_remainingFramesUntilCompletion >= 0) _remainingFramesUntilCompletion--;
-    [self notifyHandlers:0]; // did finish
+    [self notifyHandlers:0];
 }
 
 - (BOOL)isFrameAtEdge:(CGRect)f {

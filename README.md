@@ -5,7 +5,7 @@ Standalone tweak dylibs for the [Coruna](https://github.com/khanhduytran0/coruna
 ## Tweaks
 
 ### FloatingDockXVI
-iPad-style floating dock on iPhone with 6-icon support.
+iPad-style floating dock on iPhone. 6-icon dock support is in progress.
 
 - **Original tweak:** [FloatingDockXVI](https://github.com/nahtedetihw/FloatingDockXVI) by [@EthanWhited](https://x.com/EthanWhited)
 - **Source:** [`FloatingDock/FloatingDockActivator.m`](FloatingDock/FloatingDockActivator.m)

@@ -16,11 +16,15 @@ iPad-style floating dock on iPhone. 6-icon dock support is in progress.
 - **Original tweak:** [Cylinder Remade](https://github.com/ryannair05/Cylinder-Remade) by [@ryannair05](https://x.com/ryannair05)
 - **Source:** [`Cylinder/CylinderActivator.m`](Cylinder/CylinderActivator.m)
 
+### Snoverlay 2
+Falling snow overlay on the home screen and lock screen.
+
+- **Original tweak:** [Snoverlay 2](https://github.com/ryannair05/Snoverlay-2) by [@ryannair05](https://x.com/ryannair05)
+- **Source:** [`SnOverlay/SnOverlayActivator.m`](SnOverlay/SnOverlayActivator.m)
+
 ## Usage
 
-Coruna website: [.] `http://34306.lol/group.html`
-
-1. Run the Coruna exploit chain from: [.] `http://34306.lol/group.html`
+1. Run the Coruna exploit chain from `index.html`
 2. A popup menu appears automatically after the chain completes
 3. Tap **Load .dylib tweak** and select the dylib to load
 4. Long-press the status bar to bring the popup back up at any time
@@ -43,6 +47,13 @@ xcrun --sdk iphoneos clang -target arm64e-apple-ios14.0 -fobjc-arc -dynamiclib \
   -framework Foundation -framework UIKit -framework QuartzCore -lobjc \
   -Wl,-dead_strip -Os -undefined dynamic_lookup && \
 codesign -s - CylinderActivator.dylib
+
+# SnOverlayActivator
+xcrun --sdk iphoneos clang -target arm64e-apple-ios14.0 -fobjc-arc -dynamiclib \
+  -o SnOverlayActivator.dylib SnOverlay/SnOverlayActivator.m \
+  -framework Foundation -framework UIKit -framework QuartzCore -lobjc \
+  -Wl,-dead_strip -Os -undefined dynamic_lookup && \
+codesign -s - SnOverlayActivator.dylib
 ```
 
 ## Download
@@ -53,4 +64,5 @@ Pre-built ad-hoc signed dylibs are available on the [Releases page](https://gith
 
 - [FloatingDockXVI](https://github.com/nahtedetihw/FloatingDockXVI) by [@EthanWhited](https://x.com/EthanWhited) — original floating dock tweak
 - [Cylinder Remade](https://github.com/ryannair05/Cylinder-Remade) by [@ryannair05](https://x.com/ryannair05) — original page animation tweak
-- [Coruna](https://github.com/khanhduytran0/coruna) by 34306, Duy Tran, Nick Chan — exploit chain ([.] `http://34306.lol/group.html`)
+- [Snoverlay 2](https://github.com/ryannair05/Snoverlay-2) by [@ryannair05](https://x.com/ryannair05) — original snow overlay tweak
+- [Coruna](https://github.com/khanhduytran0/coruna) by 34306, Duy Tran, Nick Chan — exploit chain

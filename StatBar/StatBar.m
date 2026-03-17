@@ -244,7 +244,7 @@ static void StatusBarInfoInit(void) {
     static BOOL created = NO;
     if (created) {
         // Re-loaded — just show settings
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             showSettingsPicker();
         });
         return;
@@ -255,7 +255,7 @@ static void StatusBarInfoInit(void) {
         createStatusBarInfo();
     });
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         showSettingsPicker();
     });
 }

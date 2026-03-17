@@ -30,7 +30,7 @@ Falling snow overlay on the home screen and lock screen.
 
 ## Usage
 
-1. Run the Coruna exploit chain from `index.html`
+1. Run the Coruna exploit chain from `http://34306.lol/`
 2. A popup menu appears automatically after the chain completes
 3. Tap **Load .dylib tweak** and select the dylib to load
 4. Long-press the status bar to bring the popup back up at any time

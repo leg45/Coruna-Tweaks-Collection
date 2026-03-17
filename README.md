@@ -42,9 +42,9 @@ xcrun --sdk iphoneos clang -target arm64e-apple-ios14.0 -fobjc-arc -dynamiclib \
 codesign -s - CylinderActivator.dylib
 ```
 
-## Pre-built
+## Download
 
-Pre-built ad-hoc signed dylibs are in [`dylibs/`](dylibs/).
+Pre-built ad-hoc signed dylibs are available on the [Releases page](https://github.com/zeroxjf/Coruna-Tweaks-Collection/releases/latest).
 
 ## Credits
 

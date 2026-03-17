@@ -573,13 +573,86 @@ static void hook_updateVisible(id self, SEL _cmd, NSUInteger totalLists, NSInteg
     orig_updateVisible(self, _cmd, totalLists, 0);
 }
 
+#pragma mark - Effect names
+
+static NSString *effectName(CylinderEffect e) {
+    switch (e) {
+        case CylinderEffectCubeInside: return @"Cube (inside)";
+        case CylinderEffectCubeOutside: return @"Cube (outside)";
+        case CylinderEffectPageFade: return @"Page Fade";
+        case CylinderEffectPageFlip: return @"Page Flip";
+        case CylinderEffectPageTwist: return @"Page Twist";
+        case CylinderEffectShrink: return @"Shrink";
+        case CylinderEffectSpin: return @"Spin";
+        case CylinderEffectHinge: return @"Hinge";
+        case CylinderEffectBackwards: return @"Backwards";
+        case CylinderEffectVerticalScrolling: return @"Vertical Scrolling";
+        case CylinderEffectCardHorizontal: return @"Card Horizontal";
+        case CylinderEffectCardVertical: return @"Card Vertical";
+        case CylinderEffectIconCollection: return @"Icon Collection";
+        case CylinderEffectVortex: return @"Vortex";
+        case CylinderEffectWave: return @"Wave";
+        case CylinderEffectWheel: return @"Wheel";
+        case CylinderEffectSuck: return @"Suck";
+        case CylinderEffectScatter: return @"Scatter";
+        case CylinderEffectLeftStairs: return @"Left Stairs";
+        case CylinderEffectRightStairs: return @"Right Stairs";
+        case CylinderEffectDoubleDoor: return @"Double Door";
+        case CylinderEffectHorizontalAntLines: return @"Horizontal Ant Lines";
+        case CylinderEffectVerticalAntLines: return @"Vertical Ant Lines";
+        case CylinderEffectHyperspace: return @"Hyperspace";
+        default: return @"Unknown";
+    }
+}
+
+#pragma mark - Effect picker UI
+
+static void showEffectPicker(void) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIAlertController *picker = [UIAlertController alertControllerWithTitle:@"Cylinder"
+            message:@"Choose a page-swipe animation effect."
+            preferredStyle:UIAlertControllerStyleActionSheet];
+
+        for (int i = 0; i < CylinderEffectCount; i++) {
+            NSString *title = effectName((CylinderEffect)i);
+            if (i == (int)g_currentEffect)
+                title = [title stringByAppendingString:@" ✓"];
+            [picker addAction:[UIAlertAction actionWithTitle:title
+                style:UIAlertActionStyleDefault
+                handler:^(__unused UIAlertAction *action) {
+                    g_currentEffect = (CylinderEffect)i;
+                    NSLog(@"[Cylinder] Effect: %@", effectName(g_currentEffect));
+                }]];
+        }
+
+        [picker addAction:[UIAlertAction actionWithTitle:@"Disable"
+            style:UIAlertActionStyleDestructive
+            handler:^(__unused UIAlertAction *action) {
+                g_enabled = NO;
+                NSLog(@"[Cylinder] Disabled");
+            }]];
+
+        [picker addAction:[UIAlertAction actionWithTitle:@"Cancel"
+            style:UIAlertActionStyleCancel handler:nil]];
+
+        // Present on the top view controller
+        UIViewController *root = [[UIApplication sharedApplication].keyWindow rootViewController];
+        while (root.presentedViewController) root = root.presentedViewController;
+        [root presentViewController:picker animated:YES completion:nil];
+    });
+}
+
 #pragma mark - Effect switching via notification
 
 static void setEffectFromNotification(CFNotificationCenterRef center, void *observer,
     CFNotificationName name, const void *object, CFDictionaryRef userInfo) {
-    // Cycle to next effect
     g_currentEffect = (g_currentEffect + 1) % CylinderEffectCount;
     NSLog(@"[Cylinder] Switched to effect %ld", (long)g_currentEffect);
+}
+
+static void showPickerFromNotification(CFNotificationCenterRef center, void *observer,
+    CFNotificationName name, const void *object, CFDictionaryRef userInfo) {
+    showEffectPicker();
 }
 
 #pragma mark - Helper: swizzle instance method
@@ -628,12 +701,20 @@ static void CylinderActivatorInit(void) {
                         imp_implementationWithBlock(^(id self, BOOL v){ setWasModified(self, v); }), "v@:B");
     }
 
-    // Listen for effect-switch notification (can be triggered from command server)
+    // Listen for effect-switch notifications
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL,
         setEffectFromNotification, CFSTR("com.coruna.cylinder.nextEffect"), NULL,
+        CFNotificationSuspensionBehaviorCoalesce);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL,
+        showPickerFromNotification, CFSTR("com.coruna.cylinder.showPicker"), NULL,
         CFNotificationSuspensionBehaviorCoalesce);
 
     g_randSeed = arc4random();
 
-    NSLog(@"[Cylinder] Active — effect: Cube (inside)");
+    // Show effect picker on load
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        showEffectPicker();
+    });
+
+    NSLog(@"[Cylinder] Active — effect picker shown");
 }

@@ -39,34 +39,14 @@ These are session-only — reload after respring/reboot.
 
 ## Building
 
+Each tweak is a single `.m` file compiled as a standalone dylib:
+
 ```bash
-# FloatingDockActivator
 xcrun --sdk iphoneos clang -target arm64e-apple-ios14.0 -fobjc-arc -dynamiclib \
-  -o FloatingDockActivator.dylib FloatingDock/FloatingDockActivator.m \
-  -framework Foundation -framework UIKit -lobjc \
-  -Wl,-dead_strip -Os -undefined dynamic_lookup && \
-codesign -s - FloatingDockActivator.dylib
-
-# CylinderActivator
-xcrun --sdk iphoneos clang -target arm64e-apple-ios14.0 -fobjc-arc -dynamiclib \
-  -o CylinderActivator.dylib Cylinder/CylinderActivator.m \
+  -o <TweakName>.dylib <TweakName>.m \
   -framework Foundation -framework UIKit -framework QuartzCore -lobjc \
   -Wl,-dead_strip -Os -undefined dynamic_lookup && \
-codesign -s - CylinderActivator.dylib
-
-# SnOverlayActivator
-xcrun --sdk iphoneos clang -target arm64e-apple-ios14.0 -fobjc-arc -dynamiclib \
-  -o SnOverlayActivator.dylib SnOverlay/SnOverlayActivator.m \
-  -framework Foundation -framework UIKit -framework QuartzCore -lobjc \
-  -Wl,-dead_strip -Os -undefined dynamic_lookup && \
-codesign -s - SnOverlayActivator.dylib
-
-# FiveIconDockActivator
-xcrun --sdk iphoneos clang -target arm64e-apple-ios14.0 -fobjc-arc -dynamiclib \
-  -o FiveIconDockActivator.dylib FiveIconDock/FiveIconDockActivator.m \
-  -framework Foundation -framework UIKit -lobjc \
-  -Wl,-dead_strip -Os -undefined dynamic_lookup && \
-codesign -s - FiveIconDockActivator.dylib
+codesign -s - <TweakName>.dylib
 ```
 
 ## Download

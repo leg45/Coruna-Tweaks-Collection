@@ -34,6 +34,12 @@ Battery temperature and RAM usage displayed below the Dynamic Island. Celsius/Fa
 - **Original concept:** [Orion](https://havoc.app/package/orion) — status bar system info
 - **Source:** [`StatBar/StatBar.m`](StatBar/StatBar.m)
 
+### MobileGoose
+A little goose that walks around your screen, brings memes and notes, and occasionally goes crazy.
+
+- **Original tweak:** [MobileGoose](https://github.com/pixelomer/MobileGoose) by [pixelomer](https://github.com/pixelomer)
+- **Source:** [`MobileGoose/MobileGooseActivator.m`](MobileGoose/MobileGooseActivator.m)
+
 ## Usage
 
 1. Run the Coruna exploit chain from `http://34306.lol/`
@@ -65,4 +71,5 @@ Pre-built ad-hoc signed dylibs are available on the [Releases page](https://gith
 - [Cylinder Remade](https://github.com/ryannair05/Cylinder-Remade) by [@ryannair05](https://x.com/ryannair05) — original page animation tweak
 - [Snoverlay 2](https://github.com/ryannair05/Snoverlay-2) by [@ryannair05](https://x.com/ryannair05) — original snow overlay tweak
 - [FiveIconDock](https://github.com/lunaynx/fiveicondock) by lunaynx — original five icon dock tweak
+- [MobileGoose](https://github.com/pixelomer/MobileGoose) by [pixelomer](https://github.com/pixelomer) — original desktop goose tweak
 - [Coruna](https://github.com/khanhduytran0/coruna) by 34306, Duy Tran, Nick Chan — exploit chain

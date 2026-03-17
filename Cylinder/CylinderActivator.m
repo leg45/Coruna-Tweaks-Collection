@@ -635,8 +635,16 @@ static void showEffectPicker(void) {
         [picker addAction:[UIAlertAction actionWithTitle:@"Cancel"
             style:UIAlertActionStyleCancel handler:nil]];
 
-        // Present on the top view controller
-        UIViewController *root = [[UIApplication sharedApplication].keyWindow rootViewController];
+        // Present on the topmost view controller (handles alerts already showing)
+        UIViewController *root = nil;
+        for (UIWindowScene *scene in [UIApplication sharedApplication].connectedScenes) {
+            if (![scene isKindOfClass:[UIWindowScene class]]) continue;
+            for (UIWindow *w in scene.windows) {
+                if (w.isKeyWindow) { root = w.rootViewController; break; }
+            }
+            if (root) break;
+        }
+        if (!root) root = [[UIApplication sharedApplication].keyWindow rootViewController];
         while (root.presentedViewController) root = root.presentedViewController;
         [root presentViewController:picker animated:YES completion:nil];
     });
@@ -711,8 +719,8 @@ static void CylinderActivatorInit(void) {
 
     g_randSeed = arc4random();
 
-    // Show effect picker on load
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    // Show effect picker on load (delay to let any load-success alert present first)
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         showEffectPicker();
     });
 

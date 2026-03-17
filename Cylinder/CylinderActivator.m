@@ -678,6 +678,22 @@ __attribute__((constructor))
 static void CylinderActivatorInit(void) {
     NSLog(@"[Cylinder] CylinderActivator loading...");
 
+    // Delete our staged path so next file-picker load gets a fresh dlopen
+    // (the file picker copies to /tmp/TweakInject/<name>.dylib — same path = cached)
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(0, 0), ^{
+        [[NSFileManager defaultManager] removeItemAtPath:@"/tmp/TweakInject/CylinderActivator.dylib" error:nil];
+    });
+
+    static BOOL hooksInstalled = NO;
+    if (hooksInstalled) {
+        // Re-loaded — just show picker, don't re-hook
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            showEffectPicker();
+        });
+        return;
+    }
+    hooksInstalled = YES;
+
     // Hook SBFolderView scrollViewDidScroll: / scrollViewDidEndDecelerating:
     Class folderViewCls = objc_getClass("SBFolderView");
     if (folderViewCls) {
@@ -719,10 +735,36 @@ static void CylinderActivatorInit(void) {
 
     g_randSeed = arc4random();
 
-    // Show effect picker on load (delay to let any load-success alert present first)
+    // Add 3-finger tap gesture to re-show effect picker anytime
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        id iconCtrl = ((id (*)(Class, SEL))objc_msgSend)(objc_getClass("SBIconController"), sel_registerName("sharedInstance"));
+        if (!iconCtrl) return;
+        id homeVC = ((id (*)(id, SEL))objc_msgSend)(iconCtrl, sel_registerName("homeScreenViewController"));
+        if (!homeVC) return;
+        UIView *homeView = ((UIView *(*)(id, SEL))objc_msgSend)(homeVC, sel_registerName("view"));
+        if (!homeView) return;
+
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
+            initWithTarget:[NSBlockOperation blockOperationWithBlock:^{ showEffectPicker(); }]
+            action:@selector(main)];
+        tap.numberOfTouchesRequired = 3;
+        [homeView addGestureRecognizer:tap];
+        // prevent gesture from being deallocated
+        objc_setAssociatedObject(homeView, "cylPickerGesture", tap, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+
+        NSLog(@"[Cylinder] 3-finger tap gesture installed on home screen");
+    });
+
+    // Show effect picker on first load
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         showEffectPicker();
     });
 
     NSLog(@"[Cylinder] Active — effect picker shown");
+}
+
+// Exported function — can be called via dlsym after dlopen returns cached handle
+__attribute__((visibility("default")))
+void CylinderShowPicker(void) {
+    showEffectPicker();
 }

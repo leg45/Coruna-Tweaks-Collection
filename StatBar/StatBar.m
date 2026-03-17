@@ -97,6 +97,13 @@ static void updateInfoLabel(void) {
     }
 
     g_infoLabel.text = text;
+    [g_infoLabel sizeToFit];
+    CGRect f = g_infoLabel.frame;
+    CGFloat screenW = [UIScreen mainScreen].bounds.size.width;
+    f.size.width += 16; // padding
+    f.size.height += 4;
+    f.origin.x = (screenW - f.size.width) / 2.0;
+    g_infoLabel.frame = f;
 }
 
 static BOOL g_created = NO;
@@ -137,8 +144,12 @@ static void createStatusBarInfo(void) {
 
         CGFloat screenW = [UIScreen mainScreen].bounds.size.width;
 
-        // Dynamic Island devices: place info just below the island
-        CGFloat labelY = 59;
+        // Position below status bar area based on device type
+        CGFloat safeTop = scene.windows.firstObject.safeAreaInsets.top;
+        CGFloat labelY;
+        if (safeTop >= 59)       labelY = 52;  // Dynamic Island (iPhone 14 Pro+, 15, 16)
+        else if (safeTop >= 44)  labelY = 48;  // Notch (iPhone X–14)
+        else                     labelY = 20;  // Non-notch (SE, 8, etc.)
         CGFloat labelH = 14;
         CGFloat windowH = labelY + labelH + 2;
 
@@ -154,16 +165,13 @@ static void createStatusBarInfo(void) {
         vc.view.userInteractionEnabled = NO;
         overlay.rootViewController = vc;
 
-        // Semi-transparent background strip
-        UIView *strip = [[UIView alloc] initWithFrame:CGRectMake(0, labelY, screenW, labelH + 2)];
-        strip.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.35];
-        [vc.view addSubview:strip];
-
-        g_infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(8, labelY, screenW - 16, labelH)];
+        g_infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, labelY, screenW, labelH)];
         g_infoLabel.font = [UIFont monospacedSystemFontOfSize:10 weight:UIFontWeightMedium];
         g_infoLabel.textColor = [UIColor whiteColor];
         g_infoLabel.textAlignment = NSTextAlignmentCenter;
-        g_infoLabel.backgroundColor = [UIColor clearColor];
+        g_infoLabel.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.35];
+        g_infoLabel.layer.cornerRadius = 6;
+        g_infoLabel.layer.masksToBounds = YES;
         g_infoLabel.adjustsFontSizeToFitWidth = YES;
         g_infoLabel.minimumScaleFactor = 0.7;
         [vc.view addSubview:g_infoLabel];
@@ -229,6 +237,7 @@ static void StatusBarInfoInit(void) {
     // Delete staged file so re-loading via file picker re-runs constructor
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(0, 0), ^{
         [[NSFileManager defaultManager] removeItemAtPath:@"/tmp/TweakInject/StatusBarInfoActivator.dylib" error:nil];
+        [[NSFileManager defaultManager] removeItemAtPath:@"/tmp/TweakInject/StatBar.dylib" error:nil];
     });
 
     static BOOL created = NO;
@@ -245,7 +254,7 @@ static void StatusBarInfoInit(void) {
         createStatusBarInfo();
     });
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         showSettingsPicker();
     });
 }

